@@ -7,6 +7,8 @@ import LandingPage from "./pages/LandingPage";
 import NotFound from "./pages/NotFoundPage";
 import PostProductForm from "./pages/PostProductForm";
 import FarmerDashboard from "./pages/FarmerDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProductDetails from "./pages/ProductDetails";
 function App() {
   const router = createBrowserRouter([
     {
@@ -16,8 +18,25 @@ function App() {
     },
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
-    { path: "/products/post", element: <PostProductForm /> },
-    { path: "/farmer/dashboard", element: <FarmerDashboard /> },
+    {
+      path: "/products/post",
+      element: (
+        <ProtectedRoute
+          element={<PostProductForm />}
+          allowedRoles={["Farmer"]}
+        />
+      ),
+    },
+    {
+      path: "/farmer/dashboard",
+      element: (
+        <ProtectedRoute
+          element={<FarmerDashboard />}
+          allowedRoles={["Farmer"]}
+        />
+      ),
+    },
+    { path: "/products/:id", element: <ProductDetails /> },
   ]);
   return (
     <>

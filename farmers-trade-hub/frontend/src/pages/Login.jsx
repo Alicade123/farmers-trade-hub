@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import logo from "../assets/images/logo.jpg";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import {
