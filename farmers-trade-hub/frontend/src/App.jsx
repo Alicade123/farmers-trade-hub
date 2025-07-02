@@ -9,6 +9,9 @@ import PostProductForm from "./pages/PostProductForm";
 import FarmerDashboard from "./pages/FarmerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProductDetails from "./pages/ProductDetails";
+// Dedicated for Buyers
+import BuyerDashboard from "./pages-Buyer/BuyerDashboard";
+import ProductDetails_Bid from "./pages-Buyer/ProductDetails_Bid";
 function App() {
   const router = createBrowserRouter([
     {
@@ -37,6 +40,8 @@ function App() {
       ),
     },
     { path: "/products/:id", element: <ProductDetails /> },
+    { path: "/buyer/dashboard", element: <BuyerDashboard /> },
+    { path: "/products/bid/:id", element: <ProductDetails_Bid /> },
   ]);
   return (
     <>

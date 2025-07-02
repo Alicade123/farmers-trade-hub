@@ -19,6 +19,7 @@ router.post("/post", upload.single("image"), createProduct);
 router.get("", getAllProducts);
 router.get("/farmer/:id", getProductByFarmerId);
 router.get("/:id", getProductById);
+router.get("/bid/:id", getProductById);
 router.get("/image/:id", getProductImage);
 router.put("/:id", updateProduct);
 router.put("/:id/image", upload.single("image"), updateProductImage);

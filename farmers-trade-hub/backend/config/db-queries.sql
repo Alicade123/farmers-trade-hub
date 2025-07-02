@@ -106,10 +106,21 @@ CREATE TABLE transporters (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Optional linking table for orders & transporters
+--8. Optional linking table for orders & transporters
 CREATE TABLE order_transport (
     id SERIAL PRIMARY KEY,
     order_id INTEGER NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
     transporter_id INTEGER NOT NULL REFERENCES transporters(id) ON DELETE SET NULL,
     assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- 9. BIDS_FEES TABLE (OPTIONAL)
+-- =============================================
+CREATE TABLE bid_fees (
+  id SERIAL PRIMARY KEY,
+  buyer_id INTEGER NOT NULL,
+  product_id INTEGER NOT NULL,
+  paid BOOLEAN DEFAULT false,
+  paid_at TIMESTAMP
 );
