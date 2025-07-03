@@ -12,6 +12,9 @@ import ProductDetails from "./pages/ProductDetails";
 // Dedicated for Buyers
 import BuyerDashboard from "./pages-Buyer/BuyerDashboard";
 import ProductDetails_Bid from "./pages-Buyer/ProductDetails_Bid";
+
+//Dedicated to Admin
+import AdminDashboard from "./pages_Admin/AdminDashboard";
 function App() {
   const router = createBrowserRouter([
     {
@@ -42,6 +45,10 @@ function App() {
     { path: "/products/:id", element: <ProductDetails /> },
     { path: "/buyer/dashboard", element: <BuyerDashboard /> },
     { path: "/products/bid/:id", element: <ProductDetails_Bid /> },
+    {
+      path: "admin/dashboard",
+      element: <AdminDashboard />,
+    },
   ]);
   return (
     <>
