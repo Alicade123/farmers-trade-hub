@@ -12,7 +12,7 @@ import {
 import PostProductForm from "./PostProductForm";
 import MyProducts from "./Myproducts";
 import UserProfile from "../components/UserProfile";
-
+import FarmerBidsManager from "./FarmerBidsManager";
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
   view: { label: "My Products", icon: <FaBoxOpen /> },
@@ -71,9 +71,7 @@ export default function FarmerDashboard() {
           {activeTab === "profile" && <UserProfile user={user} />}
           {activeTab === "upload" && <PostProductForm />}
           {activeTab === "view" && <MyProducts />}
-          {activeTab === "bids" && (
-            <p className="text-gray-600">Bids content will appear here</p>
-          )}
+          {activeTab === "bids" && <FarmerBidsManager />}
           {activeTab === "delivery" && (
             <p className="text-gray-600">Delivery status will appear here</p>
           )}

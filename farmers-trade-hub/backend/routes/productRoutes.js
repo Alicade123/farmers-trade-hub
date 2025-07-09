@@ -10,6 +10,7 @@ const [
   getProductImage,
   updateProduct,
   updateProductImage,
+  closeBiddingManually,
 ] = require("../controllers/productController");
 
 const storage = multer.memoryStorage();
@@ -23,4 +24,5 @@ router.get("/bid/:id", getProductById);
 router.get("/image/:id", getProductImage);
 router.put("/:id", updateProduct);
 router.put("/:id/image", upload.single("image"), updateProductImage);
+router.put("/:id/close-bidding", closeBiddingManually);
 module.exports = router;

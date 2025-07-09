@@ -1,6 +1,5 @@
 const db = require("../config/db");
 
-// ➕ Place new bid
 const placeBid = async (req, res) => {
   const { buyer_id, product_id, amount } = req.body;
 
@@ -9,28 +8,43 @@ const placeBid = async (req, res) => {
   }
 
   try {
-    // Get current highest bid for the product
+    // ✅ Check if bidding is closed for this product
+    const check = await db.query(
+      "SELECT bidding_closed FROM products WHERE id = $1",
+      [product_id]
+    );
+
+    const isClosed = check.rows[0]?.bidding_closed;
+
+    if (isClosed) {
+      return res
+        .status(403)
+        .json({ message: "⛔ Bidding has been closed for this product." });
+    }
+
+    // ✅ Get current highest bid for the product
     const highestBidRes = await db.query(
       "SELECT MAX(amount) AS max_bid FROM bids WHERE product_id = $1",
       [product_id]
     );
+
     const maxBid = highestBidRes.rows[0].max_bid || 0;
 
-    // Check if bid is greater than current highest
+    // ✅ Ensure new bid is higher than the current max
     if (Number(amount) <= Number(maxBid)) {
       return res.status(400).json({
-        message: `Your bid must be higher than current highest bid (RWF ${maxBid})`,
+        message: `❌ Your bid must be higher than the current highest bid (RWF ${maxBid}).`,
       });
     }
 
-    // Insert bid
+    // ✅ Place the bid
     const result = await db.query(
       `INSERT INTO bids (buyer_id, product_id, amount) 
        VALUES ($1, $2, $3) RETURNING *`,
       [buyer_id, product_id, amount]
     );
 
-    res.status(201).json({ message: "Bid placed!", bid: result.rows[0] });
+    res.status(201).json({ message: "✅ Bid placed!", bid: result.rows[0] });
   } catch (error) {
     console.error("Bid error:", error);
     res
@@ -129,10 +143,55 @@ const getBidsByFarmer = async (req, res) => {
   }
 };
 
+// POST /api/bids/declare-winner// controllers/bidController.js
+
+const declareWinner = async (req, res) => {
+  const { product_id, bid_id, buyer_id, amount } = req.body;
+
+  try {
+    await db.query(
+      `INSERT INTO winners (product_id, bid_id, buyer_id, amount)
+       VALUES ($1, $2, $3, $4)`,
+      [product_id, bid_id, buyer_id, amount]
+    );
+
+    await db.query(`UPDATE products SET bidding_closed = TRUE WHERE id = $1`, [
+      product_id,
+    ]);
+
+    res.status(200).json({ success: true, message: "Winner declared." });
+  } catch (error) {
+    console.error("declareWinner error:", error.message);
+    res.status(500).json({ message: "Failed to declare winner" });
+  }
+};
+
+const getFarmerWinners = async (req, res) => {
+  const { farmer_id } = req.params;
+
+  try {
+    const result = await db.query(
+      `SELECT w.*, p.name AS product_name
+       FROM winners w
+       JOIN products p ON w.product_id = p.id
+       WHERE p.farmer_id = $1
+       ORDER BY w.created_at DESC`,
+      [farmer_id]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error("getFarmerWinners error:", err.message);
+    res.status(500).json({ message: "Failed to fetch winners" });
+  }
+};
+
 module.exports = {
   getAllBids,
   placeBid,
   getBidsForProduct,
   getBidsByBuyer,
   getBidsByFarmer,
+  declareWinner,
+  getFarmerWinners,
 };

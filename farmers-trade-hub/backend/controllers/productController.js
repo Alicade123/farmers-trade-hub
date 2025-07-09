@@ -237,6 +237,20 @@ const updateProductImage = async (req, res) => {
   }
 };
 
+const closeBiddingManually = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query("UPDATE products SET bidding_closed = TRUE WHERE id = $1", [
+      id,
+    ]);
+    res.status(200).json({ message: "Bidding closed manually." });
+  } catch (error) {
+    console.error("Manual bidding close error:", error.message);
+    res.status(500).json({ message: "Failed to close bidding" });
+  }
+};
+
 module.exports = [
   createProduct,
   getAllProducts,
@@ -245,4 +259,5 @@ module.exports = [
   getProductImage,
   updateProduct,
   updateProductImage,
+  closeBiddingManually,
 ];

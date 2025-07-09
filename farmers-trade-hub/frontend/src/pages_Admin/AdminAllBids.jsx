@@ -26,13 +26,13 @@ export default function AdminAllBids() {
             <th>Time</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="text-black font-normal">
           {bids.map((b) => (
             <tr key={b.id} className="text-center border-t">
               <td>{b.id}</td>
               <td>{b.product_id}</td>
               <td>{b.buyer_id}</td>
-              <td>{b.amount}</td>
+              <td className="font-bold">{b.amount}</td>
               <td>{new Date(b.created_at).toLocaleString()}</td>
             </tr>
           ))}

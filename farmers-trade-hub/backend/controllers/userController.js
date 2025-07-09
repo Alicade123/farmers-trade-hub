@@ -81,7 +81,7 @@ const login = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await getAllUsersModel();
-    res.json({ users });
+    res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Failed to get users: " + error.message });
   }

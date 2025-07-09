@@ -12,22 +12,6 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE products
-ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER set_updated_at
-BEFORE UPDATE ON products
-FOR EACH ROW
-EXECUTE FUNCTION update_updated_at_column();
-
 
 -- =============================================
 -- 2. PRODUCTS TABLE
@@ -44,6 +28,24 @@ CREATE TABLE products (
     expiry_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+ ALTER TABLE products
+ADD COLUMN bidding_closed BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE products
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON products
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
 
 -- Optional index for category
 CREATE INDEX idx_products_category ON products(category);
@@ -123,4 +125,17 @@ CREATE TABLE bid_fees (
   product_id INTEGER NOT NULL,
   paid BOOLEAN DEFAULT false,
   paid_at TIMESTAMP
+);
+
+-- =============================================
+-- 9. Winners TABLE (OPTIONAL)
+-- =============================================
+
+CREATE TABLE winners (
+  id SERIAL PRIMARY KEY,
+  product_id INTEGER NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  bid_id INTEGER NOT NULL REFERENCES bids(id) ON DELETE CASCADE,
+  buyer_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  amount NUMERIC(12,2) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

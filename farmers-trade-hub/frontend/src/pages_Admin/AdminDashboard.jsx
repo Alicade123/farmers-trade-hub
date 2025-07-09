@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import {
   FaUser,
   FaBoxOpen,
@@ -7,20 +7,26 @@ import {
   FaCog,
   FaSignOutAlt,
   FaGavel,
+  FaPaperclip,
+  FaUserFriends,
+  FaMoneyCheck,
 } from "react-icons/fa";
 
 import MyProducts from "./MyProducts";
 import UserProfile from "../components/UserProfile";
 import AdminAllBids from "./AdminAllBids";
 import SendPayment from "./SendPayment";
+import AdminAllUsers from "./AdminAllUsers";
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
   view: { label: "All Products", icon: <FaBoxOpen /> },
+  users: { label: "All users", icon: <FaUserFriends /> },
   bids: { label: "Bids", icon: <FaGavel /> },
   delivery: { label: "Delivery", icon: <FaTruck /> },
-  payments: { label: "Payment History", icon: <FaMoneyBill /> },
-  settings: { label: "Settings", icon: <FaCog /> },
   payload: { label: "payload", icon: <FaMoneyBill /> },
+  payments: { label: "Payment History", icon: <FaMoneyCheck /> },
+  report: { label: "Report", icon: <FaPaperclip /> },
+  settings: { label: "Settings", icon: <FaCog /> },
 };
 
 export default function FarmerDashboard() {
@@ -72,11 +78,15 @@ export default function FarmerDashboard() {
 
           {activeTab === "view" && <MyProducts />}
           {activeTab === "bids" && <AdminAllBids />}
+          {activeTab === "users" && <AdminAllUsers />}
           {activeTab === "delivery" && (
             <p className="text-gray-600">Delivery status will appear here</p>
           )}
           {activeTab === "payments" && (
             <p className="text-gray-600">Payment history to be implemented</p>
+          )}
+          {activeTab === "report" && (
+            <p className="text-gray-600">Report data coming soon</p>
           )}
           {activeTab === "settings" && (
             <p className="text-gray-600">Account settings coming soon</p>
