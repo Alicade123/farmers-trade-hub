@@ -139,3 +139,40 @@ CREATE TABLE winners (
   amount NUMERIC(12,2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE winners ADD COLUMN payment_id INTEGER REFERENCES payments(id);
+-- 10. payments
+
+CREATE TABLE payments (
+  id SERIAL PRIMARY KEY,
+  sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,  -- Usually admin
+  receiver_id INTEGER NOT NULL REFERENCES users(id) ON DELETE SET NULL,  -- Buyer or Farmer
+  product_id INTEGER REFERENCES products(id) ON DELETE SET NULL,
+  order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL,
+  winner_id INTEGER REFERENCES winners(id) ON DELETE SET NULL,
+  amount NUMERIC(12,2) NOT NULL CHECK (amount > 0),
+  momo_reference VARCHAR(100) UNIQUE, -- MoMo Transaction ID
+  status VARCHAR(30) DEFAULT 'pending' CHECK (status IN ('pending', 'success', 'failed', 'refunded')),
+  description TEXT, -- optional (e.g., "Bid Winner Payment", "Refund", etc.)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAaMP,
+  paid_at TIMESTAMP
+);
+
+--11. wallets
+ CREATE TABLE wallets (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  balance NUMERIC(12,2) DEFAULT 0 CHECK (balance >= 0),
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--12 . refunds 
+
+CREATE TABLE refunds (
+  id SERIAL PRIMARY KEY,
+  payment_id INTEGER NOT NULL REFERENCES payments(id) ON DELETE CASCADE,
+  amount NUMERIC(12,2) NOT NULL CHECK (amount > 0),
+  reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+

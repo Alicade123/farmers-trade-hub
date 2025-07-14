@@ -1,4 +1,4 @@
-import { lazy, useState } from "react";
+import { useState } from "react";
 import {
   FaUser,
   FaBoxOpen,
@@ -17,26 +17,40 @@ import UserProfile from "../components/UserProfile";
 import AdminAllBids from "./AdminAllBids";
 import SendPayment from "./SendPayment";
 import AdminAllUsers from "./AdminAllUsers";
+
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
   view: { label: "All Products", icon: <FaBoxOpen /> },
-  users: { label: "All users", icon: <FaUserFriends /> },
+  users: { label: "All Users", icon: <FaUserFriends /> },
   bids: { label: "Bids", icon: <FaGavel /> },
   delivery: { label: "Delivery", icon: <FaTruck /> },
-  payload: { label: "payload", icon: <FaMoneyBill /> },
+  payload: { label: "Payload", icon: <FaMoneyBill /> },
   payments: { label: "Payment History", icon: <FaMoneyCheck /> },
   report: { label: "Report", icon: <FaPaperclip /> },
   settings: { label: "Settings", icon: <FaCog /> },
 };
 
-export default function FarmerDashboard() {
+export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <div className="min-h-screen flex font-sans">
+    <div className="min-h-screen flex font-sans relative">
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-green-800 text-white p-6 space-y-6 shadow-lg hidden md:block">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-green-800 text-white p-6 space-y-6 shadow-lg transform transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:relative md:translate-x-0 md:block`}
+      >
         <h1 className="text-3xl font-bold mb-6">Admin Panel</h1>
 
         {/* Navigation */}
@@ -44,7 +58,10 @@ export default function FarmerDashboard() {
           {Object.entries(TABS).map(([key, { label, icon }]) => (
             <button
               key={key}
-              onClick={() => setActiveTab(key)}
+              onClick={() => {
+                setActiveTab(key);
+                setSidebarOpen(false); // Close on selection (mobile)
+              }}
               className={`flex items-center w-full gap-3 py-2 px-4 rounded-lg transition-colors duration-200 ${
                 activeTab === key
                   ? "bg-green-600 text-white"
@@ -71,14 +88,37 @@ export default function FarmerDashboard() {
         </button>
       </aside>
 
-      {/* Main content area */}
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+      {/* Main Content Area */}
+      <main className="flex-1 p-4 md:p-6 bg-gray-100 overflow-y-auto">
+        {/* Hamburger Button */}
+        <div className="md:hidden flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-green-800">
+            Admin Dashboard
+          </h2>
+          <button onClick={() => setSidebarOpen(true)}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-green-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+
         <div className="max-w-6xl mx-auto">
           {activeTab === "profile" && <UserProfile user={user} />}
-
           {activeTab === "view" && <MyProducts />}
-          {activeTab === "bids" && <AdminAllBids />}
           {activeTab === "users" && <AdminAllUsers />}
+          {activeTab === "bids" && <AdminAllBids />}
+          {activeTab === "payload" && <SendPayment />}
           {activeTab === "delivery" && (
             <p className="text-gray-600">Delivery status will appear here</p>
           )}
@@ -91,7 +131,6 @@ export default function FarmerDashboard() {
           {activeTab === "settings" && (
             <p className="text-gray-600">Account settings coming soon</p>
           )}
-          {activeTab === "payload" && <SendPayment />}
         </div>
       </main>
     </div>

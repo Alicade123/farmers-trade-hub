@@ -2,12 +2,11 @@ import { useState } from "react";
 import {
   FaUser,
   FaBoxOpen,
-  FaPlus,
+  FaGavel,
   FaTruck,
   FaMoneyBill,
   FaCog,
   FaSignOutAlt,
-  FaGavel,
 } from "react-icons/fa";
 
 import MyProducts from "./Myproducts";
@@ -23,22 +22,37 @@ const TABS = {
   settings: { label: "Settings", icon: <FaCog /> },
 };
 
-export default function FarmerDashboard() {
+export default function BuyerDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <div className="min-h-screen flex font-sans">
+    <div className="min-h-screen flex font-sans relative">
+      {/* Overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-green-800 text-white p-6 space-y-6 shadow-lg hidden md:block">
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-green-800 text-white p-6 space-y-6 shadow-lg transform transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:relative md:translate-x-0 md:block`}
+      >
         <h1 className="text-3xl font-bold mb-6">Buyer Panel</h1>
 
-        {/* Navigation */}
         <nav className="space-y-2">
           {Object.entries(TABS).map(([key, { label, icon }]) => (
             <button
               key={key}
-              onClick={() => setActiveTab(key)}
+              onClick={() => {
+                setActiveTab(key);
+                setSidebarOpen(false); // close sidebar on selection (mobile)
+              }}
               className={`flex items-center w-full gap-3 py-2 px-4 rounded-lg transition-colors duration-200 ${
                 activeTab === key
                   ? "bg-green-600 text-white"
@@ -51,7 +65,6 @@ export default function FarmerDashboard() {
           ))}
         </nav>
 
-        {/* Logout */}
         <button
           onClick={() => {
             localStorage.removeItem("token");
@@ -65,11 +78,33 @@ export default function FarmerDashboard() {
         </button>
       </aside>
 
-      {/* Main content area */}
-      <main className="flex-1 p-6 bg-gray-100 overflow-y-auto">
+      {/* Main Content */}
+      <main className="flex-1 p-4 md:p-6 bg-gray-100 overflow-y-auto">
+        {/* Hamburger for mobile */}
+        <div className="md:hidden flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-green-800">
+            Buyer Dashboard
+          </h2>
+          <button onClick={() => setSidebarOpen(true)}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-green-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+
         <div className="max-w-6xl mx-auto">
           {activeTab === "profile" && <UserProfile user={user} />}
-
           {activeTab === "view" && <MyProducts />}
           {activeTab === "bids" && <BuyerBidHistory />}
           {activeTab === "delivery" && (
