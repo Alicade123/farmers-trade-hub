@@ -1,1 +1,12 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+.input {
+  @apply w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:outline-none;
+}
+.input-file {
+  @apply block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-green-50 file:text-green-700 hover:file:bg-green-100 hover:cursor-pointer;
+}
+.btn-green {
+  @apply inline-flex items-center justify-center gap-2 rounded bg-green-700 text-white px-4 py-2 text-sm font-medium hover:bg-green-800   transition disabled:opacity-60 disabled:cursor-not-allowed;
+}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaUser,
   FaBoxOpen,
@@ -13,6 +13,7 @@ import PostProductForm from "./PostProductForm";
 import MyProducts from "./Myproducts";
 import UserProfile from "../components/UserProfile";
 import FarmerBidsManager from "./FarmerBidsManager";
+import UserSettings from "../components/UserSettings";
 
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
@@ -27,7 +28,18 @@ const TABS = {
 export default function FarmerDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
 
   return (
     <div className="min-h-screen flex font-sans relative">
@@ -52,7 +64,7 @@ export default function FarmerDashboard() {
               key={key}
               onClick={() => {
                 setActiveTab(key);
-                setSidebarOpen(false); // close sidebar on selection
+                setSidebarOpen(false);
               }}
               className={`flex items-center w-full gap-3 py-2 px-4 rounded-lg transition-colors duration-200 ${
                 activeTab === key
@@ -68,11 +80,7 @@ export default function FarmerDashboard() {
 
         {/* Logout */}
         <button
-          onClick={() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
-            window.location.href = "/login";
-          }}
+          onClick={handleLogout}
           className="flex items-center gap-3 py-2 px-4 mt-10 bg-red-600 hover:bg-red-700 w-full rounded-lg transition-colors duration-200"
         >
           <FaSignOutAlt className="text-lg" />
@@ -80,9 +88,8 @@ export default function FarmerDashboard() {
         </button>
       </aside>
 
-      {/* Main content area */}
+      {/* Main content */}
       <main className="flex-1 p-4 md:p-6 bg-gray-100 overflow-y-auto">
-        {/* Hamburger Button */}
         <div className="md:hidden flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-green-800">
             Farmer Dashboard
@@ -106,7 +113,7 @@ export default function FarmerDashboard() {
         </div>
 
         <div className="max-w-6xl mx-auto">
-          {activeTab === "profile" && <UserProfile user={user} />}
+          {activeTab === "profile" && user && <UserProfile user={user} />}
           {activeTab === "upload" && <PostProductForm />}
           {activeTab === "view" && <MyProducts />}
           {activeTab === "bids" && <FarmerBidsManager />}
@@ -116,8 +123,8 @@ export default function FarmerDashboard() {
           {activeTab === "payments" && (
             <p className="text-gray-600">Payment history to be implemented</p>
           )}
-          {activeTab === "settings" && (
-            <p className="text-gray-600">Account settings coming soon</p>
+          {activeTab === "settings" && user && (
+            <UserSettings user={user} onUpdate={setUser} />
           )}
         </div>
       </main>

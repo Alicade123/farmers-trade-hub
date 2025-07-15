@@ -160,8 +160,7 @@ export default function ProductDetails() {
               onChange={(e) =>
                 setForm({ ...form, newImage: e.target.files[0] })
               }
-              className="w-full border p-2 rounded  h-10 px-3 text-sm font-normal 
-     focus:outline-none focus:ring-2 text-gray-800 placeholder-black"
+              className="input-file"
             />
 
             <div className="flex justify-end gap-3 pt-2">

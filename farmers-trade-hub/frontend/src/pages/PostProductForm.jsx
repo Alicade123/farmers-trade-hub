@@ -146,7 +146,7 @@ export default function PostProductForm() {
             setImage(file);
             setPreview(URL.createObjectURL(file));
           }}
-          className="w-full  p-2 rounded `h-10 px-3 text-sm font-normal border focus:outline-none focus:ring-2 text-gray-800 placeholder-gray-400"
+          className="input-file"
         />
 
         {preview && (
