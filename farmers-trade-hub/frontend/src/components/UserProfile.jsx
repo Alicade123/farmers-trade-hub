@@ -19,7 +19,7 @@ export default function UserProfile({ user }) {
           <img
             src={
               user.profile_img
-                ? `data:image/png;base64,${user.profile_img}`
+                ? `data:${user.profile_img_mime};base64,${user.profile_img}`
                 : "/placeholder.jpg"
             }
             alt="Profile"

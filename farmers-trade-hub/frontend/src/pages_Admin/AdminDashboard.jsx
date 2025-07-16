@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaUser,
   FaBoxOpen,
@@ -17,7 +17,7 @@ import UserProfile from "../components/UserProfile";
 import AdminAllBids from "./AdminAllBids";
 import SendPayment from "./SendPayment";
 import AdminAllUsers from "./AdminAllUsers";
-
+import UserSettings from "../components/UserSettings";
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
   view: { label: "All Products", icon: <FaBoxOpen /> },
@@ -33,7 +33,13 @@ const TABS = {
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   return (
     <div className="min-h-screen flex font-sans relative">
@@ -114,7 +120,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="max-w-6xl mx-auto">
-          {activeTab === "profile" && <UserProfile user={user} />}
+          {activeTab === "profile" && user && <UserProfile user={user} />}
           {activeTab === "view" && <MyProducts />}
           {activeTab === "users" && <AdminAllUsers />}
           {activeTab === "bids" && <AdminAllBids />}
@@ -128,8 +134,8 @@ export default function AdminDashboard() {
           {activeTab === "report" && (
             <p className="text-gray-600">Report data coming soon</p>
           )}
-          {activeTab === "settings" && (
-            <p className="text-gray-600">Account settings coming soon</p>
+          {activeTab === "settings" && user && (
+            <UserSettings user={user} onUpdate={setUser} />
           )}
         </div>
       </main>

@@ -8,9 +8,22 @@ const createUser = async (name, email, password, role, phone, location) => {
   return results.rows[0];
 };
 
+// Get user by email
 const getUserByEmail = async (email) => {
-  const results = await db.query(`SELECT * FROM users WHERE email=$1`, [email]);
-  return results.rows[0];
+  const results = await db.query(
+    `SELECT id, name, email, password, role, phone, location, created_at, profile_img,profile_img_mime FROM users WHERE email=$1`,
+    [email]
+  );
+
+  if (results.rows.length === 0) return null;
+
+  const user = results.rows[0];
+
+  if (user.profile_img) {
+    user.profile_img = user.profile_img.toString("base64");
+  }
+
+  return user;
 };
 
 const getAllUsers = async () => {

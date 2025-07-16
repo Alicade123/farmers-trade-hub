@@ -125,9 +125,9 @@ export default function UserSettings({ user, onUpdate }) {
       {/* Tab Navigation */}
       <nav className="flex">
         {[
-          { id: "info", label: "Update Info", icon: <FaUserEdit /> },
-          { id: "password", label: "Change Password", icon: <FaLock /> },
-          { id: "image", label: "Profile Image", icon: <FaImage /> },
+          { id: "info", label: "Edit Info", icon: <FaUserEdit /> },
+          { id: "password", label: "Edit Pas", icon: <FaLock /> },
+          { id: "image", label: "Profile ", icon: <FaImage /> },
         ].map(({ id, label, icon }) => (
           <button
             key={id}
@@ -149,23 +149,26 @@ export default function UserSettings({ user, onUpdate }) {
       <div className="p-6 space-y-6">
         {activeTab === "info" && (
           <form onSubmit={handleProfileUpdate} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <input
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Full Name"
-                required
-                className="input"
-              />
-              <input
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Phone"
-                required
-                className="input"
-              />
+            <div className="  gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 py-4">
+                <input
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Full Name"
+                  required
+                  className="input"
+                />
+                <input
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Phone"
+                  required
+                  className="input"
+                />
+              </div>
+
               <input
                 name="location"
                 value={formData.location}
@@ -175,22 +178,24 @@ export default function UserSettings({ user, onUpdate }) {
                 readOnly={!!formData.coords}
                 className="input sm:col-span-2"
               />
-              {formData.coords && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    setFormData((f) => ({ ...f, coords: null, location: "" }))
-                  }
-                  className="text-xs text-blue-600 underline"
-                >
-                  Clear & pick location again
-                </button>
-              )}
-              <LocationPicker
-                value={formData.coords}
-                onChange={handleCoordsChange}
-                className="w-full"
-              />
+
+              <div className="">
+                <LocationPicker
+                  value={formData.coords}
+                  onChange={handleCoordsChange}
+                />
+                {formData.coords && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setFormData((f) => ({ ...f, coords: null, location: "" }))
+                    }
+                    className="text-xs text-blue-600 underline"
+                  >
+                    Clear & pick location again
+                  </button>
+                )}
+              </div>
             </div>
             <button
               type="submit"

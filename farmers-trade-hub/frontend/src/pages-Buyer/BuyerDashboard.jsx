@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaUser,
   FaBoxOpen,
@@ -12,6 +12,7 @@ import {
 import MyProducts from "./Myproducts";
 import UserProfile from "../components/UserProfile";
 import BuyerBidHistory from "./BuyerBidHistory";
+import UserSettings from "../components/UserSettings";
 
 const TABS = {
   profile: { label: "Profile", icon: <FaUser /> },
@@ -25,7 +26,13 @@ const TABS = {
 export default function BuyerDashboard() {
   const [activeTab, setActiveTab] = useState("profile");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    setUser(storedUser);
+  }, []);
 
   return (
     <div className="min-h-screen flex font-sans relative">
@@ -113,8 +120,8 @@ export default function BuyerDashboard() {
           {activeTab === "payments" && (
             <p className="text-gray-600">Payment history to be implemented</p>
           )}
-          {activeTab === "settings" && (
-            <p className="text-gray-600">Account settings coming soon</p>
+          {activeTab === "settings" && user && (
+            <UserSettings user={user} onUpdate={setUser} />
           )}
         </div>
       </main>

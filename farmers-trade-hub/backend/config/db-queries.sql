@@ -11,7 +11,23 @@ CREATE TABLE users (
     location TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE users ADD COLUMN profile_img BYTEA; -- to store image binary (optional)
 
+
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+ALTER TABLE users
+  ADD COLUMN IF NOT EXISTS location      TEXT,
+  ADD COLUMN IF NOT EXISTS lat           DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS lng           DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS geom          GEOGRAPHY(Point, 4326);
+
+UPDATE users
+  SET geom = ST_SetSRID(ST_MakePoint(lng, lat), 4326)::geography
+  WHERE lat IS NOT NULL AND lng IS NOT NULL;
+
+-- index for fast “within radius” searches
+CREATE INDEX IF NOT EXISTS idx_users_geom ON users USING GIST (geom);
 
 -- =============================================
 -- 2. PRODUCTS TABLE
